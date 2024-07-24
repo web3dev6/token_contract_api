@@ -2,7 +2,11 @@
 
 This is a Go REST API service that manages users, sessions and blockchain-write-transaction entries on a Postgres DB.
 
-Note: Make sure you have docker and golang-migrate (https://github.com/golang-migrate) on your system.
+Note: 
+
+Make sure to add a valid app.env file (refer app.env.example).
+
+Make sure you have docker and golang-migrate (https://github.com/golang-migrate) on your system.
 
 Run dockerized postgres service:
 ```shell
