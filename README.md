@@ -28,16 +28,6 @@ Run migration to create tables in db:
 make migrateup
 ```
 
-Run migration to create tables in db:
-```shell
-make migrateup
-```
-
-Run tests:
-```shell
-make test
-```
-
 Run tests:
 ```shell
 make test
