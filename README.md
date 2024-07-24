@@ -6,7 +6,12 @@ Note:
 
 Make sure to add a valid app.env file (refer app.env.example).
 
-Make sure you have docker and golang-migrate (https://github.com/golang-migrate) on your system.
+Make sure you have go, docker and golang-migrate (https://github.com/golang-migrate) on your system.
+
+Get dependent go modules:
+```shell
+go mod tidy
+```
 
 Run dockerized postgres service:
 ```shell
