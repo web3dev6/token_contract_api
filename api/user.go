@@ -24,6 +24,7 @@ type userResponse struct {
 	Username          string    `json:"username"`
 	FullName          string    `json:"full_name"`
 	Email             string    `json:"email"`
+	WalletAddress     string    `json:"wallet_address"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
 }
@@ -33,6 +34,7 @@ func newUserResponse(user db.User) userResponse {
 		Username:          user.Username,
 		FullName:          user.FullName,
 		Email:             user.Email,
+		WalletAddress:     user.WalletAddress,
 		PasswordChangedAt: user.PasswordChangedAt,
 		CreatedAt:         user.CreatedAt,
 	}
@@ -49,11 +51,16 @@ func (server *Server) createUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 	}
+	userWalletAddress, err := util.CreateWallet()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	}
 	arg := db.CreateUserParams{
 		Username:       req.Username,
 		HashedPassword: hashedPassword,
 		FullName:       req.FullName,
 		Email:          req.Email,
+		WalletAddress:  userWalletAddress,
 	}
 
 	user, err := server.store.CreateUser(ctx, arg)

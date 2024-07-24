@@ -12,18 +12,18 @@ import (
 
 const createTransaction = `-- name: CreateTransaction :one
 INSERT INTO transactions (username, context, payload)
-VALUES ($1, $2, $3::jsonb)
+VALUES ($1, $2, $3)
 RETURNING id, username, context, payload, is_confirmed, created_at
 `
 
 type CreateTransactionParams struct {
 	Username string          `json:"username"`
 	Context  string          `json:"context"`
-	Column3  json.RawMessage `json:"column_3"`
+	Payload  json.RawMessage `json:"payload"`
 }
 
 func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {
-	row := q.db.QueryRowContext(ctx, createTransaction, arg.Username, arg.Context, arg.Column3)
+	row := q.db.QueryRowContext(ctx, createTransaction, arg.Username, arg.Context, arg.Payload)
 	var i Transaction
 	err := row.Scan(
 		&i.ID,
@@ -57,15 +57,22 @@ func (q *Queries) GetTransaction(ctx context.Context, id int64) (Transaction, er
 	return i, err
 }
 
-const listTransactionsForUser = `-- name: ListTransactionsForUser :many
+const listTransactions = `-- name: ListTransactions :many
 SELECT id, username, context, payload, is_confirmed, created_at
 FROM transactions
 WHERE username = $1
 ORDER BY id
+LIMIT $2 OFFSET $3
 `
 
-func (q *Queries) ListTransactionsForUser(ctx context.Context, username string) ([]Transaction, error) {
-	rows, err := q.db.QueryContext(ctx, listTransactionsForUser, username)
+type ListTransactionsParams struct {
+	Username string `json:"username"`
+	Limit    int32  `json:"limit"`
+	Offset   int32  `json:"offset"`
+}
+
+func (q *Queries) ListTransactions(ctx context.Context, arg ListTransactionsParams) ([]Transaction, error) {
+	rows, err := q.db.QueryContext(ctx, listTransactions, arg.Username, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

@@ -64,6 +64,9 @@ func (server *Server) setupRouter() {
 	router.POST("/tokens/renew_access", server.renewAccessToken)
 	// add protected routes to authRoutes
 	authRoutes.GET("/users", server.getUserDetails)
+	authRoutes.POST("/transactions", server.createTransaction)
+	authRoutes.GET("/transactions/:id", server.getTransactionDetails)
+	authRoutes.GET("/transactions", server.listTransactions)
 
 	server.router = router
 }

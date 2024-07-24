@@ -17,7 +17,7 @@ type Querier interface {
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTransaction(ctx context.Context, id int64) (Transaction, error)
 	GetUser(ctx context.Context, username string) (User, error)
-	ListTransactionsForUser(ctx context.Context, username string) ([]Transaction, error)
+	ListTransactions(ctx context.Context, arg ListTransactionsParams) ([]Transaction, error)
 }
 
 var _ Querier = (*Queries)(nil)
