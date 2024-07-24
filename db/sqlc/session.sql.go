@@ -13,8 +13,8 @@ import (
 )
 
 const createSession = `-- name: CreateSession :one
-INSERT INTO sessions (id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+INSERT INTO sessions (id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id, username, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
 `
 
@@ -26,7 +26,6 @@ type CreateSessionParams struct {
 	ClientIp     string    `json:"client_ip"`
 	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`
-	CreatedAt    time.Time `json:"created_at"`
 }
 
 func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error) {
@@ -38,7 +37,6 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		arg.ClientIp,
 		arg.IsBlocked,
 		arg.ExpiresAt,
-		arg.CreatedAt,
 	)
 	var i Session
 	err := row.Scan(
