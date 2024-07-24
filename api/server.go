@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
-	db "github.com/web3dev6/token_contract_api/db/sqlc"
-	token "github.com/web3dev6/token_contract_api/token"
-	"github.com/web3dev6/token_contract_api/util"
+	db "github.com/web3dev6/token_transaction/db/sqlc"
+	token "github.com/web3dev6/token_transaction/token"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 // Server serves HTTP requests fo r our banking service

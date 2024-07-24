@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
-	"github.com/web3dev6/token_contract_api/token"
+	"github.com/web3dev6/token_transaction/token"
 )
 
 func TestMiddlewareOk(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/o1egl/paseto"
 	"github.com/stretchr/testify/require"
-	"github.com/web3dev6/token_contract_api/util"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 func TestPasetoToken(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-	"github.com/web3dev6/token_contract_api/util"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 var testQueries *Queries

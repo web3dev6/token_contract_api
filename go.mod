@@ -1,4 +1,4 @@
-module github.com/web3dev6/token_contract_api
+module github.com/web3dev6/token_transaction
 
 go 1.20
 

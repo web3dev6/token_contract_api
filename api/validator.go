@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/web3dev6/token_contract_api/util"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 var validTxContext validator.Func = func(fieldLevel validator.FieldLevel) bool {

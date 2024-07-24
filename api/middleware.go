@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/web3dev6/token_contract_api/token"
+	"github.com/web3dev6/token_transaction/token"
 )
 
 const (

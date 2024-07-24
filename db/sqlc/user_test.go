@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"github.com/web3dev6/token_contract_api/util"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 func createRandomUser(t *testing.T) User {

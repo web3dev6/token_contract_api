@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/web3dev6/token_contract_api/db/sqlc"
-	"github.com/web3dev6/token_contract_api/token"
+	db "github.com/web3dev6/token_transaction/db/sqlc"
+	"github.com/web3dev6/token_transaction/token"
 )
 
 type createTransactionRequest struct {

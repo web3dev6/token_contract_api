@@ -8,7 +8,7 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"github.com/web3dev6/token_contract_api/util"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 func TestJWTToken(t *testing.T) {
@@ -133,7 +133,7 @@ func TestInvalidJWTTokenInvalidPayload(t *testing.T) {
 			ID:        tokenID.String(),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
-			Issuer:    "token_contract_api",
+			Issuer:    "token_transaction",
 		},
 	}
 

@@ -1,16 +1,16 @@
-MAIN_DB_URL=postgresql://root:secret@localhost:5432/token_contract_api?sslmode=disable
-TEST_DB_URL=postgresql://root:secret@localhost:5431/token_contract_api_test?sslmode=disable
+MAIN_DB_URL=postgresql://root:secret@localhost:5432/token_transaction?sslmode=disable
+TEST_DB_URL=postgresql://root:secret@localhost:5431/token_transaction_test?sslmode=disable
 
 postgres:
 	docker run --name token-contract-api-db -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 	docker run --name token-contract-api-db-test -p 5431:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
 createdb:
-	docker exec -it token-contract-api-db createdb --username=root --owner=root token_contract_api
-	docker exec -it token-contract-api-db-test createdb --username=root --owner=root token_contract_api_test
+	docker exec -it token-contract-api-db createdb --username=root --owner=root token_transaction
+	docker exec -it token-contract-api-db-test createdb --username=root --owner=root token_transaction_test
 dropdb:
-	docker exec -it token-contract-api-db dropdb token_contract_api
-	docker exec -it token-contract-api-db-test dropdb token_contract_api_test
+	docker exec -it token-contract-api-db dropdb token_transaction
+	docker exec -it token-contract-api-db-test dropdb token_transaction_test
 
 migrateup:
 	migrate -path db/migration -database "$(MAIN_DB_URL)" -verbose up
@@ -38,7 +38,7 @@ server:
 	go run main.go
 
 mock:
-	mockgen -destination db/mock/store.go -package mockdb github.com/web3dev6/token_contract_api/db/sqlc Store
+	mockgen -destination db/mock/store.go -package mockdb github.com/web3dev6/token_transaction/db/sqlc Store
 
 dbdocs:
 	dbdocs build doc/db.dbml

@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
-	db "github.com/web3dev6/token_contract_api/db/sqlc"
-	"github.com/web3dev6/token_contract_api/util"
+	db "github.com/web3dev6/token_transaction/db/sqlc"
+	"github.com/web3dev6/token_transaction/util"
 )
 
 func newTestServer(t *testing.T, store db.Store) *Server {

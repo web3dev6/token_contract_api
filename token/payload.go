@@ -59,7 +59,7 @@ func NewJWTPayload(username string, duration time.Duration) (*JWTPayload, error)
 			ID:        tokenID.String(),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
-			Issuer:    "token_contract_api",
+			Issuer:    "token_transaction",
 		},
 	}
 	return jwtPayload, nil
