@@ -29,3 +29,15 @@ CREATE TABLE "transactions" (
 );
 ALTER TABLE "transactions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
 CREATE INDEX ON "sessions" ("username");
+CREATE TABLE tokens (
+  "id" BIGSERIAL PRIMARY KEY,
+  "username" varchar NOT NULL,
+  "address" VARCHAR UNIQUE NOT NULL,
+  "name" VARCHAR NOT NULL,
+  "symbol" VARCHAR NOT NULL,
+  "amount" VARCHAR NOT NULL,
+  "owner" VARCHAR NOT NULL,
+  "authority" VARCHAR NOT NULL
+);
+ALTER TABLE "tokens" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+CREATE INDEX ON "tokens" ("address");

@@ -9,7 +9,7 @@ import (
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-var txContexts = []string{CREATE_TOKEN, GRANT_ROLE, REVOKE_ROLE, MINT_TOKEN}
+var txContexts = []string{CREATE_TOKEN, MINT_TOKEN, BURN_TOKEN, TRANSFER_TOKEN}
 
 // init runs every time a package is used
 func init() {

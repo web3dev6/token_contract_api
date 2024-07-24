@@ -5,6 +5,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/web3dev6/token_transaction/db/sqlc"
@@ -15,6 +16,33 @@ type createTransactionRequest struct {
 	// Username string                `json:"username" binding:"required,alphanum"` // will come from middleware
 	Context string          `json:"context" binding:"required,context"` // TODO: could be an enum of supported operations
 	Payload json.RawMessage `json:"payload" binding:"required"`         // TODO: need to put validations on payload - defined structs only
+}
+
+type transactionResponse struct {
+	Username    string          `json:"username"`
+	Context     string          `json:"context"`
+	Payload     json.RawMessage `json:"payload"`
+	IsConfirmed bool            `json:"is_confirmed"`
+	CreatedAt   time.Time       `json:"created_at"`
+}
+
+func newTransactionResponse(transaction db.Transaction) transactionResponse {
+	return transactionResponse{
+		Username:    transaction.Username,
+		Context:     transaction.Context,
+		Payload:     transaction.Payload,
+		IsConfirmed: transaction.IsConfirmed,
+		CreatedAt:   transaction.CreatedAt,
+	}
+}
+
+func newTransactionResponses(transactions []db.Transaction) []transactionResponse {
+	var responses []transactionResponse
+	for _, transaction := range transactions {
+		response := newTransactionResponse(transaction)
+		responses = append(responses, response)
+	}
+	return responses
 }
 
 func (server *Server) createTransaction(ctx *gin.Context) {
@@ -38,7 +66,8 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transaction)
+	resp := newTransactionResponse(transaction)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 type getTransactionRequest struct {
@@ -64,7 +93,8 @@ func (server *Server) getTransactionDetails(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transaction)
+	resp := newTransactionResponse(transaction)
+	ctx.JSON(http.StatusOK, resp)
 }
 
 type listTransactionsRequest struct {
@@ -91,5 +121,6 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transactions)
+	resp := newTransactionResponses(transactions)
+	ctx.JSON(http.StatusOK, resp)
 }
