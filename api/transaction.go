@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/web3dev6/token_transaction/auth"
 	db "github.com/web3dev6/token_transaction/db/sqlc"
-	"github.com/web3dev6/token_transaction/token"
 )
 
 type createTransactionRequest struct {
@@ -53,7 +53,7 @@ func (server *Server) createTransaction(ctx *gin.Context) {
 	}
 	// fmt.Println("req.Payload: ", string(req.Payload))
 
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*auth.Payload)
 	arg := db.CreateTransactionParams{
 		Username: authPayload.Username,
 		Context:  req.Context,
@@ -87,7 +87,7 @@ func (server *Server) getTransactionDetails(ctx *gin.Context) {
 		return
 	}
 
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*auth.Payload)
 	if transaction.Username != authPayload.Username {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrFetchingUnauthorizedTransaction))
 		return
@@ -109,7 +109,7 @@ func (server *Server) listTransactions(ctx *gin.Context) {
 		return
 	}
 
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*auth.Payload)
 	arg := db.ListTransactionsParams{
 		Username: authPayload.Username,
 		Limit:    req.PageSize,

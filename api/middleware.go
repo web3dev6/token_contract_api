@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/web3dev6/token_transaction/token"
+	auth "github.com/web3dev6/token_transaction/auth"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	authorizationPayloadKey = "authorization_payload"
 )
 
-func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
+func authMiddleware(tokenMaker auth.Maker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// check auth header
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)

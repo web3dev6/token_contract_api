@@ -7,15 +7,15 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
+	auth "github.com/web3dev6/token_transaction/auth"
 	db "github.com/web3dev6/token_transaction/db/sqlc"
-	token "github.com/web3dev6/token_transaction/token"
 	"github.com/web3dev6/token_transaction/util"
 )
 
 // Server serves HTTP requests fo r our banking service
 type Server struct {
 	store      db.Store    // queries
-	tokenMaker token.Maker // manage tokens for users
+	tokenMaker auth.Maker  // manage tokens for users
 	router     *gin.Engine // send to correct handler for processing
 	config     util.Config // store config used to start the server
 }
@@ -23,13 +23,13 @@ type Server struct {
 // NewServer creates a new HTTP server and setup routing for service
 func NewServer(config util.Config, store db.Store) (*Server, error) {
 	// token maker for auth handling from config
-	var tokenMaker token.Maker
+	var tokenMaker auth.Maker
 	var err error
 	switch config.TokenMakerType {
 	case "JWT":
-		tokenMaker, err = token.NewJWTMaker(config.TokenSymmetricKey)
+		tokenMaker, err = auth.NewJWTMaker(config.TokenSymmetricKey)
 	case "PASETO":
-		tokenMaker, err = token.NewPasetoMaker(config.TokenSymmetricKey)
+		tokenMaker, err = auth.NewPasetoMaker(config.TokenSymmetricKey)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("cannot create token maker: %w", err)
@@ -61,7 +61,7 @@ func (server *Server) setupRouter() {
 	// add public routes to router
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
-	router.POST("/tokens/renew_access", server.renewAccessToken)
+	router.POST("/auth/renew_access", server.renewAccessToken)
 	// add protected routes to authRoutes
 	authRoutes.GET("/users", server.getUserDetails)
 	authRoutes.POST("/transactions", server.createTransaction)

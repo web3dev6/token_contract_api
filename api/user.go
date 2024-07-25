@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/web3dev6/token_transaction/auth"
 	db "github.com/web3dev6/token_transaction/db/sqlc"
-	"github.com/web3dev6/token_transaction/token"
 	"github.com/web3dev6/token_transaction/util"
 )
 
@@ -79,7 +79,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 }
 
 func (server *Server) getUserDetails(ctx *gin.Context) {
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*auth.Payload)
 
 	user, err := server.store.GetUser(ctx, authPayload.Username)
 	if err != nil {
