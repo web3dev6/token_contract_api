@@ -1,76 +1,139 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/web3dev6/token_transaction/util"
 )
 
-type renewAccessTokenRequest struct {
-	RefreshToken string `json:"refresh_token" binding:"required"`
+type getTokenDetailsRequest struct {
+	TokenAddress string `uri:"tokenAddress" binding:"required,address"`
+}
+type TokenDetailsResponse struct {
+	Name        string `json:"name"`
+	Symbol      string `json:"symbol"`
+	TotalSupply string `json:"totalSupply"`
+	TokenOwner  string `json:"tokenOwner"`
 }
 
-type renewAccessTokenResponse struct {
-	AccessToken          string    `json:"access_token"`
-	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
-}
-
-func (server *Server) renewAccessToken(ctx *gin.Context) {
-	var req renewAccessTokenRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+func (server *Server) getTokenDetails(ctx *gin.Context) {
+	var req getTokenDetailsRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	// check if refreshToken is valid or not
-	refreshPayload, err := server.tokenMaker.VerifyToken(req.RefreshToken)
+	// Construct the URL with the route parameter
+	url := fmt.Sprintf("%s/token/%s", server.config.TokenSvcBaseUrl, req.TokenAddress)
+	// Set up the HTTP request options
+	options := util.HTTPRequestOptions{
+		Method: "GET",
+		URL:    url,
+		Headers: map[string]string{
+			"Authorization": ctx.GetHeader(authorizationHeaderKey),
+		},
+	}
+	// Make the HTTP request
+	responseBody, err := util.HttpRequest(options)
 	if err != nil {
-		// token is invalid or expired
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		log.Fatalf("Error making request to %s: %v", url, err)
+	}
+	fmt.Printf("Response body from %s: %s\n", url, responseBody)
+
+	// Unmarshal the response body into TokenDetailsResponse
+	var tokenDetails TokenDetailsResponse
+	if err := json.Unmarshal(responseBody, &tokenDetails); err != nil {
+		log.Printf("Error unmarshaling token details response body: %v", err)
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	// Send the response back to the client
+	ctx.JSON(http.StatusOK, tokenDetails)
+}
+
+type getTokenBalanceRequest struct {
+	TokenAddress  string `uri:"tokenAddress" binding:"required,address"`
+	WalletAddress string `uri:"walletAddress" binding:"required,address"`
+}
+type TokenBalanceResponse struct {
+	Balance string `json:"balance"`
+}
+
+func (server *Server) getTokenBalance(ctx *gin.Context) {
+	var req getTokenBalanceRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	// if refreshPayload is good, get corresponding session
-	session, err := server.store.GetSession(ctx, refreshPayload.ID)
+	// Construct the URL with the route parameters
+	url := fmt.Sprintf("%s/token/%s/balance/%s", server.config.TokenSvcBaseUrl, req.TokenAddress, req.WalletAddress)
+	// Set up the HTTP request options
+	options := util.HTTPRequestOptions{
+		Method: "GET",
+		URL:    url,
+		Headers: map[string]string{
+			"Authorization": ctx.GetHeader(authorizationHeaderKey),
+		},
+	}
+	// Make the HTTP request
+	responseBody, err := util.HttpRequest(options)
 	if err != nil {
-		// session not found from sessionId (which is refreshToken's uuid)
-		ctx.JSON(http.StatusNotFound, errorResponse(ErrSessionNotFound))
-		return
+		log.Fatalf("Error making request to %s: %v", url, err)
 	}
+	fmt.Printf("Response body from %s: %s\n", url, responseBody)
 
-	// if session found, check if this session is not blocked
-	if session.IsBlocked {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrBlockedSession))
+	// Unmarshal the response body into TokenBalanceResponse
+	var tokenBalance TokenBalanceResponse
+	if err := json.Unmarshal(responseBody, &tokenBalance); err != nil {
+		log.Printf("Error unmarshaling token balance response body: %v", err)
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	// also check if RefreshToken's Username is same as corresponding session's Username (from db)
-	if session.Username != refreshPayload.Username {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrIncorrectSessionUser))
-		return
-	}
-	// also check if RefreshToken is same as corresponding session's RefreshToken (from db)
-	if session.RefreshToken != req.RefreshToken {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrIncorrectSessionToken))
-		return
-	}
-	// note* token expiration is already checked for in VerifyToken (*Payload.Valid()), still check for rare case
-	if time.Now().After(refreshPayload.ExpiresAt) {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrExpiredSession))
-		return
-	}
+	// Send the response back to the client
+	ctx.JSON(http.StatusOK, tokenBalance)
+}
 
-	// issue a new accessToken
-	newAccessToken, accessPayload, err := server.tokenMaker.CreateToken(refreshPayload.Username, server.config.AccessTokenDuration)
+type Token struct {
+	Username  string `json:"username"`
+	Address   string `json:"address"`
+	Name      string `json:"name"`
+	Symbol    string `json:"symbol"`
+	Amount    string `json:"amount"`
+	Owner     string `json:"owner"`
+	Authority string `json:"authority"`
+}
+
+func (server *Server) listTokens(ctx *gin.Context) {
+	// Construct the URL
+	url := fmt.Sprintf("%s/token", server.config.TokenSvcBaseUrl)
+	// Set up the HTTP request options
+	options := util.HTTPRequestOptions{
+		Method: "GET",
+		URL:    url,
+		Headers: map[string]string{
+			"Authorization": ctx.GetHeader(authorizationHeaderKey),
+		},
+	}
+	// Make the HTTP request
+	responseBody, err := util.HttpRequest(options)
 	if err != nil {
+		log.Fatalf("Error making request to %s: %v", url, err)
+	}
+	fmt.Printf("Response body from %s: %s\n", url, responseBody)
+
+	// Unmarshal the response body into a slice of Token
+	var tokens []Token
+	if err := json.Unmarshal(responseBody, &tokens); err != nil {
+		log.Printf("Error unmarshaling tokens response body: %v", err)
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	// send ok response if all ok WITH renewAccessToken Response
-	resp := renewAccessTokenResponse{
-		AccessToken:          newAccessToken,
-		AccessTokenExpiresAt: accessPayload.ExpiresAt,
-	}
-	ctx.JSON(http.StatusOK, resp)
+	// Send the response back to the client
+	ctx.JSON(http.StatusOK, tokens)
 }

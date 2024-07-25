@@ -23,6 +23,7 @@ type transactionResponse struct {
 	Context     string          `json:"context"`
 	Payload     json.RawMessage `json:"payload"`
 	IsConfirmed bool            `json:"is_confirmed"`
+	Status      string          `json:"status"`
 	CreatedAt   time.Time       `json:"created_at"`
 }
 
@@ -32,6 +33,7 @@ func newTransactionResponse(transaction db.Transaction) transactionResponse {
 		Context:     transaction.Context,
 		Payload:     transaction.Payload,
 		IsConfirmed: transaction.IsConfirmed,
+		Status:      transaction.Status,
 		CreatedAt:   transaction.CreatedAt,
 	}
 }

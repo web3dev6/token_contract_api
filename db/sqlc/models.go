@@ -22,12 +22,24 @@ type Session struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
+type Token struct {
+	ID        int64  `json:"id"`
+	Username  string `json:"username"`
+	Address   string `json:"address"`
+	Name      string `json:"name"`
+	Symbol    string `json:"symbol"`
+	Amount    string `json:"amount"`
+	Owner     string `json:"owner"`
+	Authority string `json:"authority"`
+}
+
 type Transaction struct {
 	ID          int64           `json:"id"`
 	Username    string          `json:"username"`
 	Context     string          `json:"context"`
 	Payload     json.RawMessage `json:"payload"`
 	IsConfirmed bool            `json:"is_confirmed"`
+	Status      string          `json:"status"`
 	CreatedAt   time.Time       `json:"created_at"`
 }
 

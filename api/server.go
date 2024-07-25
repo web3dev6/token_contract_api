@@ -44,6 +44,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	// 	Gin Validator binding - register "currency" as a validator tag
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("context", validTxContext)
+		v.RegisterValidation("address", validEthAddress)
 	}
 
 	// setup router with routes
@@ -62,11 +63,15 @@ func (server *Server) setupRouter() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 	router.POST("/auth/renew_access", server.renewAccessToken)
+
 	// add protected routes to authRoutes
 	authRoutes.GET("/users", server.getUserDetails)
 	authRoutes.POST("/transactions", server.createTransaction)
 	authRoutes.GET("/transactions/:id", server.getTransactionDetails)
 	authRoutes.GET("/transactions", server.listTransactions)
+	authRoutes.GET("/tokens", server.listTokens)
+	authRoutes.GET("/tokens/:tokenAddress", server.getTokenDetails)
+	authRoutes.GET("/tokens/:tokenAddress/balance/:walletAddress", server.getTokenBalance)
 
 	server.router = router
 }

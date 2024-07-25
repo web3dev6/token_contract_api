@@ -25,10 +25,11 @@ CREATE TABLE "transactions" (
   "context" varchar NOT NULL,
   "payload" JSONB NOT NULL,
   "is_confirmed" boolean NOT NULL DEFAULT false,
+  "status" VARCHAR NOT NULL DEFAULT 'PENDING', -- can be an enum instead of string
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 ALTER TABLE "transactions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
-CREATE INDEX ON "sessions" ("username");
+CREATE INDEX ON "transactions" ("context");
 CREATE TABLE tokens (
   "id" BIGSERIAL PRIMARY KEY,
   "username" varchar NOT NULL,
@@ -39,5 +40,5 @@ CREATE TABLE tokens (
   "owner" VARCHAR NOT NULL,
   "authority" VARCHAR NOT NULL
 );
-ALTER TABLE "tokens" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
+ALTER TABLE "tokens" ADD FOREIGN KEY ("username") REFERENCES "users" ("username"); -- TODO: can also link token to its CREATE_TOKEN txn here
 CREATE INDEX ON "tokens" ("address");

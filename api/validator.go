@@ -13,3 +13,12 @@ var validTxContext validator.Func = func(fieldLevel validator.FieldLevel) bool {
 	}
 	return false
 }
+
+var validEthAddress validator.Func = func(fieldLevel validator.FieldLevel) bool {
+	if address, ok := fieldLevel.Field().Interface().(string); ok {
+		// check if valid eth address
+		return util.IsValidEthAddress(address)
+
+	}
+	return false
+}

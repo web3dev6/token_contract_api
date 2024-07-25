@@ -17,6 +17,7 @@ type Config struct {
 	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
+	TokenSvcBaseUrl      string        `mapstructure:"TOKEN_SVC_BASE_URL"`
 }
 
 // LoadConfig reads configuration from file if path exists or set/override configuration with env-vars if provided
